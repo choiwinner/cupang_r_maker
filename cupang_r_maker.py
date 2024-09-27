@@ -131,8 +131,6 @@ class Coupang:
 
                 save_data.append(dict_data)
 
-                #org print(dict_data , '\n')
-
             time.sleep(1)
 
             return save_data
@@ -209,7 +207,7 @@ class OpenPyXL:
         return df
 
 #Gemini API Key Setting
-os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key
+os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key_240927
 
 def review_maker(prod,ex):
 
@@ -243,10 +241,6 @@ def review_maker(prod,ex):
     resonse = chain.invoke({"product": prod, "ex0": ex[0], "ex1": ex[1], "ex2": ex[2]})
     st.write(resonse)
 
-    ## 파일을 쓰기 모드로 엽니다.
-    #with open(f'C:\python\LLM_RAG\LLM_RAG\cupang\리뷰\{prod}_리뷰_기존리뷰참고.txt', 'w') as file:
-    #   file.write(resonse)
-
 def review_maker2(prod):
 
     # LCEL chaining
@@ -274,14 +268,10 @@ def review_maker2(prod):
     resonse = chain.invoke({"product": prod})
     st.write(resonse)
     
-    #with open(f'C:\python\LLM_RAG\LLM_RAG\cupang\리뷰\{prod}_리뷰_기존참고안함.txt', 'w') as file:
-    #   file.write(resonse)
 
 @st.cache_data()
 def hold(hold_v):
     if(hold_v == 'OK'):
-        #st.error("잘못된 입력입니다. 다시 입력해 주세요.")
-        #st.stop()
         st.write('사용자님 환영합니다.')
     else:
         st.error("잘못된 입력입니다. 다시 입력해 주세요.")
