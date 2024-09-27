@@ -17,7 +17,6 @@ import requests as rq
 import pandas as pd
 
 #Steamlit cloud에서 GitHub 아이콘 숨기기용 CSS 코드
-# CSS로 소스 코드 아이콘 숨기기
 hide_code = """
 <style>
 .streamlit-expanderHeader {
