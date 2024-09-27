@@ -16,6 +16,18 @@ import re
 import requests as rq
 import pandas as pd
 
+#Steamlit cloud에서 GitHub 아이콘 숨기기용 CSS 코드
+# CSS로 소스 코드 아이콘 숨기기
+hide_code = """
+<style>
+.streamlit-expanderHeader {
+    display: none;
+}
+</style>
+"""
+st.markdown(hide_code, unsafe_allow_html=True)
+#######################################################
+
 def get_headers(
     key: str,
     default_value: Optional[str] = None
@@ -280,20 +292,12 @@ def hold(hold_v):
 if __name__ == "__main__":
     freeze_support() # for multiprocessing other process on windows
     
+    
     # 페이지 기본 설정
     #st.set_page_config(
     #page_title="🔎쿠팡 리뷰 Maker",
     #layout="wide",
     #initial_sidebar_state="expanded")
-
-    #Steamlit cloud에서 GitHub 아이콘 숨기기용 CSS 코드
-    hide_github_icon = """
-    #GithubIcon {
-        visibility: hidden;
-    }
-    """  
-    st.markdown(hide_github_icon, unsafe_allow_html=True)
-    #######################################################
 
     hold_v = 'No'
 
