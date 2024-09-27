@@ -7,9 +7,6 @@ from langchain_google_genai import ChatGoogleGenerativeAI #LLM Setting
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser 
 
-#library import
-#import OpenPyXL
-
 from bs4 import BeautifulSoup as bs
 from typing import Optional,Union,Dict,List
 from openpyxl import Workbook
