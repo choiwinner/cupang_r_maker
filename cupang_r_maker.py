@@ -214,7 +214,6 @@ class OpenPyXL:
 #Gemini API Key Setting
 os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key
 
-
 def review_maker(prod,ex):
 
     # LCEL chaining
