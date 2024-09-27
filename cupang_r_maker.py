@@ -281,10 +281,10 @@ if __name__ == "__main__":
     freeze_support() # for multiprocessing other process on windows
     
     # 페이지 기본 설정
-    st.set_page_config(
-    page_title="🔎쿠팡 리뷰 Maker",
-    layout="wide",
-    initial_sidebar_state="expanded")
+    #st.set_page_config(
+    #page_title="🔎쿠팡 리뷰 Maker",
+    #layout="wide",
+    #initial_sidebar_state="expanded")
 
     #Steamlit cloud에서 GitHub 아이콘 숨기기용 CSS 코드
     hide_github_icon = """
