@@ -212,7 +212,7 @@ class OpenPyXL:
         return df
 
 #Gemini API Key Setting
-os.environ["GOOGLE_API_KEY"] = 'AIzaSyCiZGcZhZ-asd8SY6wtsPfAj0E6m2dnrMY'
+os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key
 
 def review_maker(prod,ex):
 
