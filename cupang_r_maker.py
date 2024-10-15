@@ -69,7 +69,8 @@ class Coupang:
         prod_code : str = self.get_product_code(url=URL)
 
         # URL 주소 재가공
-        URLS : List[str] = [f'https://www.coupang.com/vp/product/reviews?productId={prod_code}&page={page}&size=5&sortBy=ORDER_SCORE_ASC&ratings=&q=&viRoleCode=3&ratingSummary=true' for page in range(1,self.input_page_count() + 1)]
+        #URLS : List[str] = [f'https://www.coupang.com/vp/product/reviews?productId={prod_code}&page={page}&size=5&sortBy=ORDER_SCORE_ASC&ratings=&q=&viRoleCode=3&ratingSummary=true' for page in range(1,self.input_page_count() + 1)]
+        URLS : List[str] = [f'https://www.coupang.com/vp/product/reviews?productId={prod_code}&page={page}&size=5&sortBy=ORDER_SCORE_ASC&ratings=&q=&viRoleCode=3&ratingSummary=true' for page in range(1,2)]
 
         # __headers에 referer 키 추가
         self.__headers['referer'] = URL
@@ -220,7 +221,7 @@ class OpenPyXL:
 #Gemini API Key Setting
 os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key_240927(new)
 
-def review_maker(prod,ex):
+def review_maker(prod,ex,num=500):
 
     # LCEL chaining
     chain = (
@@ -230,29 +231,25 @@ def review_maker(prod,ex):
         리뷰는 예제의 내용을 참고해서 만들고 또한 규칙을 지켜서 작성해야 합니다.
 
         [규칙]
-        1) 리뷰는 반드시 아래 2개의 문장으로 시작해야 합니다.
-        - 안녕하세요. 먹을 거 좋아하는 남자애 2명(초등 3학년, 중학 1학년)을 키우는 주부입니다.
+        1) 리뷰는 반드시 아래 문장으로 시작해야 합니다.
         - 이번에 구매하게 된 {product}에 대한 사용기에 대해 말씀드릴께요.
-        2) 전체 글자수는 400자 이상 500자 이하로 작성해야 합니다.
+        2) 전체 글자수는 {num}자 이하로 작성해야 합니다.
         3) 남자 아이 두명(중학교 1학년,초등학생)을 키우는 40대 초반의 주부라고 생각하고 작성해야 합니다.
-        5) 문장과 문장사이는 구분이 되게 줄바꿈이 될 수 있도록 작성해야 합니다.
-        6) 장점과 단점을 구분해서 작성해야 합니다.
+        4) 장점과 단점을 구분해서 작성해야 합니다.
         
         [예제]
         1) {ex0}
         2) {ex1}
-        3) {ex2}
-        
         """
         ) 
         | ChatGoogleGenerativeAI(model="gemini-1.5-flash-exp-0827", temperature = 0.2) 
         | StrOutputParser()
     )
     # chain 호출
-    resonse = chain.invoke({"product": prod, "ex0": ex[0], "ex1": ex[1], "ex2": ex[2]})
+    resonse = chain.invoke({"product": prod, "ex0": ex[0], "ex1": ex[1], "num": num})
     st.write(resonse)
 
-def review_maker2(prod):
+def review_maker2(prod,num=500):
 
     # LCEL chaining
     chain = (
@@ -262,13 +259,11 @@ def review_maker2(prod):
         리뷰는 규칙을 지켜서 작성해야 합니다.
 
         [규칙]
-        1) 리뷰는 반드시 아래 2개의 문장으로 시작해야 합니다.
-        - 안녕하세요. 먹을 거 좋아하는 남자애 2명(초등 3학년, 중학 1학년)을 키우는 주부입니다.
+        1) 리뷰는 반드시 아래 문장으로 시작해야 합니다.
         - 이번에 구매하게 된 {product}에 대한 사용기에 대해 말씀드릴께요.
-        2) 전체 글자수는 400자 이상 500자 이하로 작성해야 합니다.
+        2) 전체 글자수는 {num}자 이하로 작성해야 합니다.
         3) 남자 아이 두명(중학교 1학년,초등학생)을 키우는 40대 초반의 주부라고 생각하고 작성해야 합니다.
-        5) 문장과 문장사이는 구분이 되게 줄바꿈이 될 수 있도록 작성해야 합니다.
-        6) 장점과 단점을 구분해서 작성해야 합니다.
+        4) 장점과 단점을 구분해서 작성해야 합니다.
         
         """
         ) 
@@ -276,7 +271,7 @@ def review_maker2(prod):
         | StrOutputParser()
     )
     # chain 호출
-    resonse = chain.invoke({"product": prod})
+    resonse = chain.invoke({"product": prod, "num": num})
     st.write(resonse)
     
 
@@ -433,11 +428,41 @@ if __name__ == "__main__":
 
     for index,i in enumerate(reviews):
        ex[index]=i
+    
+    selected_option = st.radio(
+        '리뷰 종류를 선택하세요.:',('일반', '체험단',))
+
+    if selected_option == '일반':
+        num = 500
+    elif selected_option == '체험단':
+        num = 800
+
 
     if prod := st.text_input('제품명을 입력하세요. 일반단어로 표현해 주세요 ex) 샘표간장(x), 간장(o) >>>   '):
-       st.subheader("기존 Review를 참고하여 작성한 리뷰입니다.")
-       review_maker(prod,ex)
-       st.subheader("기존 Review를 참고하지 않고 작성한 리뷰입니다.")
-       review_maker2(prod)
 
-       st.info("리뷰 생성이 완료 됐습니다.")
+        
+        st.info(f'{selected_option}을 선택하셔서 {num}자의 리뷰를 생성합니다.')
+
+        st.subheader("기존 Review를 참고하여 작성한 리뷰입니다.")
+        review_maker(prod,ex,num)
+        st.subheader("기존 Review를 참고하지 않고 작성한 리뷰입니다.")
+        review_maker2(prod,num) 
+        st.info("리뷰 생성이 완료 됐습니다.")
+
+
+    #1) 리뷰는 반드시 아래 2개의 문장으로 시작해야 합니다.
+    #- 안녕하세요. 먹을 거 좋아하는 남자애 2명(초등 3학년, 중학 1학년)을 키우는 주부입니다.
+    #- 이번에 구매하게 된 {product}에 대한 사용기에 대해 말씀드릴께요.
+    #2) 전체 글자수는 {num}자 이하로 작성해야 합니다.
+    #3) 남자 아이 두명(중학교 1학년,초등학생)을 키우는 40대 초반의 주부라고 생각하고 작성해야 합니다.
+    #5) 문장과 문장사이는 구분이 되게 줄바꿈이 될 수 있도록 작성해야 합니다.
+    #6) 장점과 단점을 구분해서 작성해야 합니다.
+
+    #[규칙]
+    #1) 리뷰는 반드시 아래 2개의 문장으로 시작해야 합니다.
+    #- 안녕하세요. 먹을 거 좋아하는 남자애 2명(초등 3학년, 중학 1학년)을 키우는 주부입니다.
+    #- 이번에 구매하게 된 {product}에 대한 사용기에 대해 말씀드릴께요.
+    #2) 전체 글자수는 400자 이상 500자 이하로 작성해야 합니다.
+    #3) 남자 아이 두명(중학교 1학년,초등학생)을 키우는 40대 초반의 주부라고 생각하고 작성해야 합니다.
+    #5) 문장과 문장사이는 구분이 되게 줄바꿈이 될 수 있도록 작성해야 합니다.
+    #6) 장점과 단점을 구분해서 작성해야 합니다.
