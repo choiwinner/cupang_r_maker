@@ -227,7 +227,7 @@ def review_maker(prod,ex,num=500):
     chain = (
         ChatPromptTemplate.from_template(
         """
-        당신은 {product}을 구매한 후에 {product}을 사용해 보고 {product}의 리뷰를 작성하는 인공지능 챗봇입니다.
+        당신은 쿠팡에서 {product}을 구매한 후에 {product}을 사용해 보고 {product}의 리뷰를 작성하는 인공지능 챗봇입니다.
         리뷰는 예제의 내용을 참고해서 만들고 또한 규칙을 지켜서 작성해야 합니다.
 
         [규칙]
@@ -240,13 +240,14 @@ def review_maker(prod,ex,num=500):
         [예제]
         1) {ex0}
         2) {ex1}
+        3) {ex2}
         """
         ) 
         | ChatGoogleGenerativeAI(model="gemini-1.5-flash-exp-0827", temperature = 0.2) 
         | StrOutputParser()
     )
     # chain 호출
-    resonse = chain.invoke({"product": prod, "ex0": ex[0], "ex1": ex[1], "num": num})
+    resonse = chain.invoke({"product": prod, "ex0": ex[0], "ex1": ex[1],  "ex2": ex[2], "num": num})
     st.write(resonse)
 
 def review_maker2(prod,num=500):
@@ -255,7 +256,7 @@ def review_maker2(prod,num=500):
     chain = (
         ChatPromptTemplate.from_template(
         """
-        당신은 {product}을 구매한 후에 {product}을 사용해 보고 {product}의 리뷰를 작성하는 인공지능 챗봇입니다.
+        당신은 쿠팡에서 {product}을 구매한 후에 {product}을 사용해 보고 {product}의 리뷰를 작성하는 인공지능 챗봇입니다.
         리뷰는 규칙을 지켜서 작성해야 합니다.
 
         [규칙]
