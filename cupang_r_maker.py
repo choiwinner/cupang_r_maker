@@ -221,7 +221,7 @@ class OpenPyXL:
 #Gemini API Key Setting
 os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key_240927(new)
 
-def review_maker(prod,ex,num=500):
+def review_maker(prod,ex,selected_model,num=500):
 
     # LCEL chaining
     chain = (
@@ -243,14 +243,14 @@ def review_maker(prod,ex,num=500):
         3) {ex2}
         """
         ) 
-        | ChatGoogleGenerativeAI(model="gemini-1.5-flash-exp-0827", temperature = 0.2) 
+        | ChatGoogleGenerativeAI(model=selected_model, temperature = 0.1) 
         | StrOutputParser()
     )
     # chain 호출
     resonse = chain.invoke({"product": prod, "ex0": ex[0], "ex1": ex[1],  "ex2": ex[2], "num": num})
     st.write(resonse)
 
-def review_maker2(prod,num=500):
+def review_maker2(prod,selected_model,num=500):
 
     # LCEL chaining
     chain = (
@@ -268,7 +268,7 @@ def review_maker2(prod,num=500):
         
         """
         ) 
-        | ChatGoogleGenerativeAI(model="gemini-1.5-flash-exp-0827", temperature = 0.2) 
+        | ChatGoogleGenerativeAI(model=selected_model, temperature = 0.1) 
         | StrOutputParser()
     )
     # chain 호출
@@ -429,6 +429,10 @@ if __name__ == "__main__":
 
     for index,i in enumerate(reviews):
        ex[index]=i
+
+    selected_model = st.radio('Choose Gemini Model', ['gemini-1.5-flash', 'gemini-1.5-flash-latest','gemini-1.5-pro', 'gemini-1.5-pro-latest'], key='selected_model')
+
+    st.info(f'{selected_model}을 선택하셨습니다.')
     
     selected_option = st.radio(
         '리뷰 종류를 선택하세요.:',('일반', '체험단',))
@@ -438,16 +442,15 @@ if __name__ == "__main__":
     elif selected_option == '체험단':
         num = 800
 
-
     if prod := st.text_input('제품명을 입력하세요. 일반단어로 표현해 주세요 ex) 샘표간장(x), 간장(o) >>>   '):
 
         
         st.info(f'{selected_option}을 선택하셔서 {num}자의 리뷰를 생성합니다.')
 
         st.subheader("기존 Review를 참고하여 작성한 리뷰입니다.")
-        review_maker(prod,ex,num)
+        review_maker(prod,ex,selected_model,num)
         st.subheader("기존 Review를 참고하지 않고 작성한 리뷰입니다.")
-        review_maker2(prod,num) 
+        review_maker2(prod,selected_model,num) 
         st.info("리뷰 생성이 완료 됐습니다.")
 
 
