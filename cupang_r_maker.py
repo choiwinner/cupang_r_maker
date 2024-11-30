@@ -442,6 +442,11 @@ if __name__ == "__main__":
     elif selected_option == '체험단':
         num = 800
 
+    st.info('참고 review')
+    st.write(ex[0])
+    st.write(ex[1])
+    st.write(ex[2])
+
     if prod := st.text_input('제품명을 입력하세요. 일반단어로 표현해 주세요 ex) 샘표간장(x), 간장(o) >>>   '):
 
         
