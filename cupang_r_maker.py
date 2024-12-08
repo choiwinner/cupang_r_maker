@@ -273,9 +273,9 @@ if __name__ == "__main__":
         '리뷰 종류를 선택하세요.:',('일반', '체험단',))
 
     if selected_option == '일반':
-        num = 500
-    elif selected_option == '체험단':
         num = 800
+    elif selected_option == '체험단':
+        num = 1000
 
     st.info('참고 review')
     st.write(st.session_state.reviews[0])
