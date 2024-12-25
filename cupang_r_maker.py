@@ -15,6 +15,15 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup as bs
 
+import google.generativeai as genai
+
+## generateContent를 지원하는 모델 목록 출력
+#print("generateContent를 지원하는 모델 목록:\n")
+#for m in genai.list_models():
+#    if "generateContent" in m.supported_generation_methods:
+#        print(m.name)
+
+
 #Gemini API Key Setting
 os.environ["GOOGLE_API_KEY"] = 'AIzaSyDRmcCNGKkn0ZfacIIaqQwGM-ZZZ27nmpw' ##enjin key_240927(new)
 
@@ -99,8 +108,8 @@ def cupang_crwal(URL,count):
     # 쿠팡 상품 페이지 열기
     driver.get(URL)
 
-    # 페이지 로딩 대기(3초)
-    time.sleep(3) 
+    # 페이지 로딩 대기(5초)
+    time.sleep(10) 
     
     # bs4로 리뷰 찾기
     html = driver.page_source
@@ -265,7 +274,7 @@ if __name__ == "__main__":
     cupang_crwal(st.session_state.url,5)
 
 
-    selected_model = st.radio('Choose Gemini Model', ['gemini-1.5-flash', 'gemini-1.5-flash-latest','gemini-1.5-pro', 'gemini-1.5-pro-latest'], key='selected_model')
+    selected_model = st.radio('Choose Gemini Model', ['gemini-1.5-flash', 'gemini-1.5-flash-latest','gemini-1.5-pro', 'gemini-1.5-pro-latest','gemini-2.0-flash-exp'], key='selected_model')
 
     st.info(f'{selected_model}을 선택하셨습니다.')
     
@@ -273,9 +282,9 @@ if __name__ == "__main__":
         '리뷰 종류를 선택하세요.:',('일반', '체험단',))
 
     if selected_option == '일반':
-        num = 800
-    elif selected_option == '체험단':
         num = 1000
+    elif selected_option == '체험단':
+        num = 1500
 
     st.info('참고 review')
     st.write(st.session_state.reviews[0])
