@@ -17,6 +17,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup as bs
 from selenium.webdriver.chrome.options import Options
 
+import tempfile
 
 
 import google.generativeai as genai
@@ -103,7 +104,10 @@ def cupang_crwal(URL):
     options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
     # Streamlit 임시 디렉토리 사용
-    cache_path = st.runtime.get_static_dir()  
+    # 임시 디렉토리 경로 설정
+    cache_path = tempfile.gettempdir()
+
+    #cache_path = st.runtime.get_static_dir()  
     service = Service(ChromeDriverManager(path=cache_path).install())
 
     #service = Service(ChromeDriverManager().install())
