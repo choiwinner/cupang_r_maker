@@ -92,18 +92,34 @@ def hold(hold_v):
 def cupang_crwal(URL):
 
     # 크롬 드라이버 경로 설정
-    options = Options() 
-    #options = webdriver.ChromeOptions()
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--disable-features=NetworkService')
+    options.add_argument('--window-size=1920x1080')
+    options.add_argument('--disable-features=VizDisplayCompositor')
+    
+    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
-    options.add_argument('--headless=new')           #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
-    options.add_argument('--disable-gpu')            #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
-    options.add_argument('--no-sandbox')             #Streamlit Cloud에서 Selenium WebDriver 에러를 해결   
-    options.add_argument('--disable-dev-shm-usage')  #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+    
+    
+    service = Service(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service, options=options)
 
-    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-    options.add_argument("--disable-blink-features=AutomationControlled")
-
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    #options = Options() 
+    ##options = webdriver.ChromeOptions()
+#
+    #options.add_argument('--headless=new')           #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+    #options.add_argument('--disable-gpu')            #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+    #options.add_argument('--no-sandbox')             #Streamlit Cloud에서 Selenium WebDriver 에러를 해결   
+    #options.add_argument('--disable-dev-shm-usage')  #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+#
+    #options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+    #options.add_argument("--disable-blink-features=AutomationControlled")
+#
+    #driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
     # 쿠팡 상품 페이지 열기
     driver.get(URL)
