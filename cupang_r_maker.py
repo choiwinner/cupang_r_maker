@@ -100,11 +100,11 @@ def cupang_crwal(URL):
     options.add_argument('--disable-features=NetworkService')
     options.add_argument('--window-size=1920x1080')
     options.add_argument('--disable-features=VizDisplayCompositor')
-    
     options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
-    
-    
+    # 환경 변수 설정
+    os.environ['WDM_LOCAL'] = '1'
+
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
 
