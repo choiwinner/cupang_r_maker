@@ -152,6 +152,9 @@ if __name__ == "__main__":
 
     freeze_support() # for multiprocessing other process on windows
 
+    os.environ['WDM_LOG_LEVEL'] = '0'
+    os.environ['WDM_LOCAL'] = '1'
+
     # 페이지 기본 설정
     st.set_page_config(
         page_title="🔎쿠팡 리뷰 Maker",
