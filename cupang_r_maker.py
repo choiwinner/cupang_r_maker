@@ -15,6 +15,9 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup as bs
+from selenium.webdriver.chrome.options import Options
+
+
 
 import google.generativeai as genai
 
@@ -89,9 +92,10 @@ def hold(hold_v):
 def cupang_crwal(URL):
 
     # 크롬 드라이버 경로 설정
-    options = webdriver.ChromeOptions()
+    options = Options() 
+    #options = webdriver.ChromeOptions()
 
-    options.add_argument('--headless')               #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+    options.add_argument('--headless=new')           #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
     options.add_argument('--disable-gpu')            #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
     options.add_argument('--no-sandbox')             #Streamlit Cloud에서 Selenium WebDriver 에러를 해결   
     options.add_argument('--disable-dev-shm-usage')  #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
