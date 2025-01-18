@@ -87,10 +87,15 @@ def hold(hold_v):
 
 @st.cache_data()
 def cupang_crwal(URL):
-    
+
     # 크롬 드라이버 경로 설정
     options = webdriver.ChromeOptions()
-    options.add_argument('--headless')
+
+    options.add_argument('--headless')               #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+    options.add_argument('--disable-gpu')            #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+    options.add_argument('--no-sandbox')             #Streamlit Cloud에서 Selenium WebDriver 에러를 해결   
+    options.add_argument('--disable-dev-shm-usage')  #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
+
     options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   like Gecko) Chrome/58.0.3029.110 Safari/537.3')
     options.add_argument("--disable-blink-features=AutomationControlled")
 
