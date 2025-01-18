@@ -102,10 +102,11 @@ def cupang_crwal(URL):
     options.add_argument('--disable-features=VizDisplayCompositor')
     options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
-    # 환경 변수 설정
-    os.environ['WDM_LOCAL'] = '1'
+    # Streamlit 임시 디렉토리 사용
+    cache_path = st.runtime.get_static_dir()  
+    service = Service(ChromeDriverManager(path=cache_path).install())
 
-    service = Service(ChromeDriverManager().install())
+    #service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
 
     #options = Options() 
