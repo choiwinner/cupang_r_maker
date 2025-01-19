@@ -16,11 +16,26 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup as bs
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.core.os_manager import ChromeType
+from selenium.webdriver.common.by import By
 
-import tempfile
+def get_driver():
 
 
-import google.generativeai as genai
+    options = Options()
+    options.add_argument('--headless')
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    #options.add_argument('--disable-gpu')
+
+    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
+
+    return webdriver.Chrome(
+                service=Service(
+                    ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+            ),
+            options=options,
+        )
 
 def review_maker(prod,ex,selected_model,num=500):
 
@@ -89,76 +104,63 @@ def hold(hold_v):
         st.error("잘못된 입력입니다. 다시 입력해 주세요.")
         st.stop()
 
-@st.cache_data()
-def cupang_crwal(URL):
 
-    # 크롬 드라이버 경로 설정
+def get_driver():
+
+
     options = Options()
-    options.add_argument('--headless')
+    #options.add_argument('--headless')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     options.add_argument('--disable-gpu')
-    options.add_argument('--disable-features=NetworkService')
-    options.add_argument('--window-size=1920x1080')
-    options.add_argument('--disable-features=VizDisplayCompositor')
+
     options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
 
-    # Streamlit 임시 디렉토리 사용
-    # 임시 디렉토리 경로 설정
-    cache_path = tempfile.gettempdir()
+    return webdriver.Chrome(
+                service=Service(
+                    ChromeDriverManager(chrome_type=ChromeType.CHROMIUM).install()
+            ),
+            options=options,
+        )
 
-    #cache_path = st.runtime.get_static_dir()  
-    service = Service(ChromeDriverManager(path=cache_path).install())
 
-    #service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
+@st.cache_data()
+def cupang_crwal(URL):
 
-    #options = Options() 
-    ##options = webdriver.ChromeOptions()
-#
-    #options.add_argument('--headless=new')           #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
-    #options.add_argument('--disable-gpu')            #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
-    #options.add_argument('--no-sandbox')             #Streamlit Cloud에서 Selenium WebDriver 에러를 해결   
-    #options.add_argument('--disable-dev-shm-usage')  #Streamlit Cloud에서 Selenium WebDriver 에러를 해결
-#
-    #options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,   #like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-    #options.add_argument("--disable-blink-features=AutomationControlled")
-#
-    #driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    driver = get_driver()
+
+    url = 'https://www.coupang.com/vp/products/7335597976?itemId=18741704367&vendorItemId=85873964906&  q=%ED%9E%98%EB%82%B4%EB%B0%94+%EC%B4%88%EC%BD%94+%EC%8A%A4%EB%8B%88%EC%BB%A4%EC%A6%88&itemsCount=36&  searchId=0c5c84d537bc41d1885266961d853179&rank=2&isAddedCart=:'
 
     # 쿠팡 상품 페이지 열기
     driver.get(URL)
 
     # 페이지 로딩 대기(5초)
     time.sleep(5) 
-    
-    # bs4로 리뷰 찾기
-    html = driver.page_source
-    soup = bs(html, 'html.parser')
-    result = soup.select('div.sdp-review__article__list__review__content')
 
-    count = len(result) #review 개수 확인
+    results = driver.find_elements(By.CLASS_NAME, "sdp-review__article__list__review__content")
+
+    
+    st.write(results[0].text)
+
+    count = len(results) #review 개수 확인
 
     if count >=5:
         st.info(f'{count}의 Review가 성공적으로 검색되었습니다.')
 
     else:
-        st.error(f"{count}개 Review가 검색되어 소스코드 수정 필요합니다.(5개 미만만)")
+        st.error(f"{count}개 Review가 검색되어 소스코드 수정 필요합니다.(5개 미만)")
         st.stop()
 
     reviews = []
 
     for i in range(count):
-        reviews.append(result[i].getText().strip())
+        reviews.append(results[i].text)
     
     return reviews
     
 if __name__ == "__main__":
 
     freeze_support() # for multiprocessing other process on windows
-
-    os.environ['WDM_LOG_LEVEL'] = '0'
-    os.environ['WDM_LOCAL'] = '1'
 
     # 페이지 기본 설정
     st.set_page_config(
@@ -168,28 +170,26 @@ if __name__ == "__main__":
 
     if "reviews" not in st.session_state:
         st.session_state.reviews = []
+    
     if "url" not in st.session_state:
         st.session_state.url = None
     
-    if "gemini" not in st.session_state:
-        st.session_state.gemini_api_key = None
-    
     #hold_v = 'No'
 
-    with st.sidebar:
-        st.session_state.gemini_api_key = st.text_input('Gemini_API_KEY를 입력하세요.', key="langchain_search_api_gemini", type="password")
-        "[Get an Gemini API key](https://ai.google.dev/)"
-        "[How to get Gemini API Key](https://luvris2.tistory.com/880)"
-
-        if (st.session_state.gemini_api_key[0:2] != 'AI') or (len(st.session_state.gemini_api_key) != 39):
-            st.warning('잘못된 key 입력', icon='⚠️')
-        else:
-            st.success('정상 key 입력', icon='👉')
-
-        if process :=st.button("Process"):
-            if (st.session_state.gemini_api_key[0:2] != 'AI') or (len(st.session_state.gemini_api_key) != 39):
-                st.error("잘못된 key 입력입니다. 다시 입력해 주세요.")
-                st.stop()
+    #with st.sidebar:
+    #    st.session_state.gemini_api_key = st.text_input('Gemini_API_KEY를 입력하세요.', #key="langchain_search_api_gemini", type="password")
+    #    "[Get an Gemini API key](https://ai.google.dev/)"
+    #    "[How to get Gemini API Key](https://luvris2.tistory.com/880)"
+#
+    #    if (st.session_state.gemini_api_key[0:2] != 'AI') or (len(st.session_state.gemini_api_key) != 39):
+    #        st.warning('잘못된 key 입력', icon='⚠️')
+    #    else:
+    #        st.success('정상 key 입력', icon='👉')
+#
+    #    if process :=st.button("Process"):
+    #        if (st.session_state.gemini_api_key[0:2] != 'AI') or (len(st.session_state.gemini_api_key) != #39):
+    #            st.error("잘못된 key 입력입니다. 다시 입력해 주세요.")
+    #            st.stop()
 
         #random_val = int(st.text_input('문제를 선택하시오 0~10번 선택'))
 #
@@ -303,27 +303,13 @@ if __name__ == "__main__":
         #        else:
         #            hold_v = 'OK'
 
-    st.header("**:blue[_쿠팡_] :red[_Revies_] Maker** :sunglasses:")
+    st.header("**:blue[_쿠팡_] :red[_Reviews_] Maker** :sunglasses:")
     st.subheader(f"쿠팡 리뷰를 검색하고 AI로 리뷰를 작성합니다.")
 
-    #0. gemini api key Setting
-    if not st.session_state.gemini_api_key:
-        st.warning("Gemini API Key를 입력해 주세요.")
-        st.stop()
-
-    #0. gemini api key Setting
-    os.environ["GOOGLE_API_KEY"] = st.session_state.gemini_api_key
-
-    #if namex:
-    #    hold_v = 'OK'
-
-    #st.write(hold_v)
-
-    #hold(hold_v)
+    load_dotenv()
 
     st.session_state.url = st.text_input('원하시는 상품의 URL 주소를 입력해주세요\n\nEx)\nhttps://www.coupang.com/vp/products/7335597976?itemId=18741704367&vendorItemId=85873964906&q=%ED%9E%98%EB%82%B4%EB%B0%94+%EC%B4%88%EC%BD%94+%EC%8A%A4%EB%8B%88%EC%BB%A4%EC%A6%88&itemsCount=36&searchId=0c5c84d537bc41d1885266961d853179&rank=2&isAddedCart=:')
 
-    #st.session_state.url = 'https://www.coupang.com/vp/products/7040671922'
 
     if not st.session_state.url:
         st.warning("url을 입력해 주세요.")
